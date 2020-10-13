@@ -1,6 +1,3 @@
-const CACHE_NAME = "static-cache-v2";
-const DATA_CACHE_NAME = "data-cache-v1";
-
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
@@ -10,6 +7,9 @@ const FILES_TO_CACHE = [
   '/styles.css',
   "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
   "https://cdn.jsdelivr.net/npm/chart.js@2.8.0"];
+
+const CACHE_NAME = "static-cache-v2";
+const DATA_CACHE_NAME = "data-cache-v1";
 
 self.addEventListener("install", function (evt) {
   evt.waitUntil(
@@ -47,12 +47,15 @@ self.addEventListener("fetch", function (evt) {
             if (response.status === 200) {
               cache.put(evt.request, response.clone());
             }
+
             return response;
           })
           .catch(err => {
             return cache.match(evt.request);
           });
-      }).catch(err => console.log(err)));
+      })
+    );
+    return;
   }
   evt.respondWith(
     caches.open(CACHE_NAME).then(cache => {
