@@ -11,7 +11,7 @@ const FILES_TO_CACHE = [
   "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
   "https://cdn.jsdelivr.net/npm/chart.js@2.8.0"];
 
-self.addEventListener("install", function(evt) {
+self.addEventListener("install", function (evt) {
   evt.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       console.log("Your files were pre-cached successfully!");
@@ -21,7 +21,7 @@ self.addEventListener("install", function(evt) {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", function(evt) {
+self.addEventListener("activate", function (evt) {
   evt.waitUntil(
     caches.keys().then(keyList => {
       return Promise.all(
@@ -37,8 +37,8 @@ self.addEventListener("activate", function(evt) {
   self.clients.claim();
 });
 
-self.addEventListener("fetch", function(evt) {
-  const {url} = evt.request;
+self.addEventListener("fetch", function (evt) {
+  const { url } = evt.request;
   if (url.includes("/api/")) {
     evt.respondWith(
       caches.open(DATA_CACHE_NAME).then(cache => {
@@ -52,15 +52,13 @@ self.addEventListener("fetch", function(evt) {
           .catch(err => {
             return cache.match(evt.request);
           });
-      })
-    );
-    return;
+      }).catch(err => console.log(err)));
   }
-    evt.respondWith(
-      caches.open(CACHE_NAME).then(cache => {
-        return cache.match(evt.request).then(response => {
-          return response || fetch(evt.request);
-        });
-      })
-    );
+  evt.respondWith(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(evt.request).then(response => {
+        return response || fetch(evt.request);
+      });
+    })
+  );
 });
